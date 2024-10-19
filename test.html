@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Bot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat { width: 100%; max-width: 600px; margin: auto; }
+        #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+        #input { width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <div id="messages"></div>
+        <input id="input" type="text" placeholder="Type a message..." />
+    </div>
+    <script>
+        const apiKey = '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'; // Thay thế bằng API key của bạn
+
+        $('#input').keypress(function (e) {
+            if (e.which == 13) {
+                const userMessage = $(this).val();
+                $('#messages').append('<div>User: ' + userMessage + '</div>');
+                $(this).val('');
+
+                $.post('https://api.openai.com/v1/chat/completions', {
+                    model: 'gpt-3.5-turbo',
+                    messages: [{ role: 'user', content: userMessage }]
+                }, function (data) {
+                    const botMessage = data.choices[0].message.content;
+                    $('#messages').append('<div>Bot: ' + botMessage + '</div>');
+                }, 'json').fail(function () {
+                    $('#messages').append('<div>Bot: Error connecting to API</div>');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
